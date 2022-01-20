@@ -2,5 +2,6 @@
 
 S3method(as_tibble,inla)
 S3method(as_tibble,inla.posterior.sample)
+S3method(autoplot,inla)
 export(char)
 export(inla.posterior.sample)

@@ -34,19 +34,20 @@ You can install the released version of inlar here.
 This is a basic example which shows you how to solve a common problem:
 
 ```{r package, message=FALSE, warning=FALSE}
-library(tidyverse)
-library(INLA)
+library(ggplot2)
 library(inlar) 
+set.seed(1)
 ```
 
+The original data is binded to the output by default for those subject-specific
+outputs.
+
 ```{r example}
-r = inla(y ~ 1 + f(x, model = 'iid'),
+r = INLA::inla(y ~ 1 + f(x, model = 'iid'),
   data = data.frame(y = rnorm(2), x = rnorm(2)),
   control.compute = list(config = TRUE),
   control.predictor = list(compute = TRUE, link = 1)
 )
-
-str(r, 1)
 
 ## Summary
 r |> as_tibble(type = 'summary', 'random')
@@ -62,4 +63,17 @@ samples = inla.posterior.sample(2, r)
 samples |> as_tibble("hyperpar")
 samples |> as_tibble("latent")
 samples |> as_tibble("logdens")
+```
+
+Some figures
+
+```{r, fig.cap = "Random effects"}
+autoplot(r, "summary", "random") +
+  labs(title = "autoplot for INLA", x = "X's effect", y = "Est (95% CrI)")
+```
+
+```{r, fig.cap = "Fitted"}
+autoplot(r, "summary", "fitted.values") +
+  geom_abline(slope = 1, intercept = 0) +
+  labs(title = "Fitted vs data", x = "Fitted median", y = "Data", caption = 'can be wrong if link function is not correctly specify')
 ```

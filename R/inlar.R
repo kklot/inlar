@@ -80,12 +80,12 @@ as_tibble.inla <- function(obj,
 
     if (type == "marginals") {
         if (term == "random") 
-            o <- map(it, map_dfr, tibble::as_tibble, rownames = "id", .id = "id") %>%
-                bind_rows(.id = "var") %>%
-                mutate(id = as.numeric(str_extract(id, "[0-9]+")))
+            o <- purrr::map(it, purrr::map_dfr, tibble::as_tibble, rownames = "id", .id = "id") %>%
+                dplyr::bind_rows(.id = "var") %>%
+                dplyr::mutate(id = as.numeric(stringr::str_extract(id, "[0-9]+")))
         else 
-            o <- purrr::map_dfr(it, as_tibble, .id = "id") %>%
-                mutate(id = as.numeric(str_extract(id, "[0-9]+$")))
+            o <- purrr::map_dfr(it, tibble::as_tibble, .id = "id") %>%
+                dplyr::mutate(id = as.numeric(stringr::str_extract(id, "[0-9]+$")))
     }
     o
 }
