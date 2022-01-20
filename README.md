@@ -1,20 +1,20 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# gginla
+# inlar
 
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of gginla is to …
+The goal of inlar is to …
 
 ## Installation
 
-You can install the released version of gginla from
+You can install the released version of inlar from
 [CRAN](https://CRAN.R-project.org) with:
 
 ``` r
-#' remotes::install_github("kklot/gginla")
+#' remotes::install_github("kklot/inlar")
 ```
 
 ## Example
@@ -22,7 +22,7 @@ You can install the released version of gginla from
 This is a basic example which shows you how to solve a common problem:
 
 ``` r
-#' library(gginla)
+library(inlar)
 ## basic example code
 ```
 
