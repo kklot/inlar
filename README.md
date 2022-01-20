@@ -6,12 +6,12 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of inlar is to …
+The goal of inlar is to ease output processing of INLA’s outputs by
+putting them in `tibble` format.
 
 ## Installation
 
-You can install the released version of inlar from
-[CRAN](https://CRAN.R-project.org) with:
+You can install the released version of inlar here.
 
 ``` r
 #' remotes::install_github("kklot/inlar")
@@ -22,33 +22,45 @@ You can install the released version of inlar from
 This is a basic example which shows you how to solve a common problem:
 
 ``` r
-library(inlar)
-## basic example code
+library(tidyverse)
+library(INLA)
+library(inlar) # load after INLA
 ```
-
-What is special about using `README.Rmd` instead of just `README.md`?
-You can include R chunks like so:
 
 ``` r
-summary(cars)
-#>      speed           dist       
-#>  Min.   : 4.0   Min.   :  2.00  
-#>  1st Qu.:12.0   1st Qu.: 26.00  
-#>  Median :15.0   Median : 36.00  
-#>  Mean   :15.4   Mean   : 42.98  
-#>  3rd Qu.:19.0   3rd Qu.: 56.00  
-#>  Max.   :25.0   Max.   :120.00
+## Posterior sample
+r = inla(y ~ 1,
+  data = data.frame(y = rnorm(2)),
+  control.compute = list(config = TRUE)
+)
+
+samples = inla.posterior.sample(2, r)
+
+samples |>
+  as_tibble("hyperpar")
+#> # A tibble: 2 × 3
+#>   sample_id term                                    value
+#>       <dbl> <chr>                                   <dbl>
+#> 1         1 Precision for the Gaussian observations 2.30 
+#> 2         2 Precision for the Gaussian observations 0.677
+
+samples |>
+  as_tibble("latent")
+#> # A tibble: 6 × 4
+#>   sample_id term        term_id   value
+#>       <dbl> <chr>         <dbl>   <dbl>
+#> 1         1 Predictor         1 -1.25  
+#> 2         1 Predictor         2 -1.25  
+#> 3         1 (Intercept)       1 -1.24  
+#> 4         2 Predictor         1  0.0512
+#> 5         2 Predictor         2  0.0503
+#> 6         2 (Intercept)       1  0.0511
+
+samples |>
+  as_tibble("logdens")
+#> # A tibble: 2 × 4
+#>   sid   hyperpar latent joint
+#>   <chr>    <dbl>  <dbl> <dbl>
+#> 1 1       -3.37    6.79  3.42
+#> 2 2       -0.380   9.26  8.88
 ```
-
-You’ll still need to render `README.Rmd` regularly, to keep `README.md`
-up-to-date. `devtools::build_readme()` is handy for this. You could also
-use GitHub Actions to re-render `README.Rmd` every time you push. An
-example workflow can be found here:
-<https://github.com/r-lib/actions/tree/master/examples>.
-
-You can also embed plots, for example:
-
-<img src="man/figures/README-pressure-1.png" width="100%" />
-
-In that case, don’t forget to commit and push the resulting figure
-files, so they display on GitHub and CRAN.
