@@ -36,24 +36,30 @@ This is a basic example which shows you how to solve a common problem:
 ```{r package, message=FALSE, warning=FALSE}
 library(tidyverse)
 library(INLA)
-library(inlar) # load after INLA
+library(inlar) 
 ```
 
 ```{r example}
-## Posterior sample
-r = inla(y ~ 1,
-  data = data.frame(y = rnorm(2)),
-  control.compute = list(config = TRUE)
+r = inla(y ~ 1 + f(x, model = 'iid'),
+  data = data.frame(y = rnorm(2), x = rnorm(2)),
+  control.compute = list(config = TRUE),
+  control.predictor = list(compute = TRUE, link = 1)
 )
 
+str(r, 1)
+
+## Summary
+r |> as_tibble(type = 'summary', 'random')
+r |> as_tibble(type = 'summary', 'linear.predictor')
+
+## Marginals
+r |> as_tibble(type = 'marginals', 'random')
+r |> as_tibble(type = 'marginals', 'linear.predictor')
+
+## Posterior sample
 samples = inla.posterior.sample(2, r)
 
-samples |>
-  as_tibble("hyperpar")
-
-samples |>
-  as_tibble("latent")
-
-samples |>
-  as_tibble("logdens")
+samples |> as_tibble("hyperpar")
+samples |> as_tibble("latent")
+samples |> as_tibble("logdens")
 ```
