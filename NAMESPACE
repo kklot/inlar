@@ -2,4 +2,5 @@
 
 S3method(as_tibble,inla.posterior.sample)
 export(as_tibble)
+export(char)
 export(inla.posterior.sample)
