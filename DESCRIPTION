@@ -1,0 +1,12 @@
+Package: gginla
+Title: Process INLA output for plotting
+Version: 0.0.0.9000
+Authors@R: 
+    person("Van Kinh", "Nguyen", , "k.nguyen@ic.ac.uk", role = c("aut", "cre"),
+           comment = c(ORCID = "YOUR-ORCID-ID"))
+Description: Prep `INLA` model output to tibble format and plotting the results with `ggplot2`
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.2
