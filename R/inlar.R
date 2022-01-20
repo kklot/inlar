@@ -10,12 +10,6 @@ inla.posterior.sample <- function(...) {
     o
 }
 
-#' as_tibble generic
-#'
-#' @param x Object to foo.
-#' @export
-as_tibble <- function(...) UseMethod("as_tibble")
-
 #' Convert posterior sample to tibble long format
 #'
 #'
