@@ -42,4 +42,51 @@ as_tibble.inla.posterior.sample <- function(obj, var = c('hyperpar', 'latent', '
             dplyr::rename_with(~ char(sample_id, term, value))  %>%
             dplyr::mutate(dplyr::across(c(sample_id), as.numeric))
     o
-} 
+}
+
+#' Convert posterior sample to tibble long format
+#'
+#'
+#' @param obj return obj from \code{\link[inlar]{inla.posterior.sample}}.
+#' @param type summary or marginals>
+#' @param term which of the random, linear.predictor, or fitted.values
+#' @export 
+as_tibble.inla <- function(obj, 
+    type = char(summary, marginals), 
+    term = char(random, linear.predictor, fitted.values)) 
+{
+    if (!inherits(obj, "inla")) stop("Obj is not an INLA model")
+
+    type <- match.arg(type)
+    term <- match.arg(term)
+
+    tt <- paste(type, term, sep = ".")
+    it <- obj %>% purrr::pluck(tt, .default = "not_exist")
+
+    if (length(it) == 1 && it == "not_exist") stop("You didn't tell INLA to compute it.")
+
+    if (type == "summary") {
+        if (term == "random") 
+            o <- dplyr::bind_rows(it, .id = "var") %>%
+                dplyr::select(1:7) %>%
+                dplyr::rename_with(~ char(var, id, mean, sd, q025, q50, q975))
+
+        if (term %in% c("fitted.values", "linear.predictor")) 
+            o <- tibble::as_tibble(it, rownames = "term") %>%
+                dplyr::select(1:6) %>%
+                dplyr::rename_with(~ char(subj_id, mean, sd, q025, q50, q975)) %>%
+                dplyr::bind_cols(obj$.args$data)
+    }
+
+    if (type == "marginals") {
+        if (term == "random") 
+            o <- map(it, map_dfr, tibble::as_tibble, rownames = "id", .id = "id") %>%
+                bind_rows(.id = "var") %>%
+                mutate(id = as.numeric(str_extract(id, "[0-9]+")))
+        else 
+            o <- purrr::map_dfr(it, as_tibble, .id = "id") %>%
+                mutate(id = as.numeric(str_extract(id, "[0-9]+$")))
+    }
+    o
+}
+
